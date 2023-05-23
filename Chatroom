@@ -1,0 +1,145 @@
+import openai
+import random
+import sqlite3
+
+def initialize_models():
+    # Set up your OpenAI API key
+    openai.api_key = "YOUR_API_KEY"
+
+    # Initialize and load A.L.I.S.T.A.I.R.E. model
+    alistaire_model = "gpt-3.5-turbo"
+    alistaire_tokenizer = "gpt3"
+
+    # Initialize and load AURORA model
+    aurora_model = "gpt-3.5-turbo"
+    aurora_tokenizer = "gpt3"
+
+    # Initialize and load NOVA model
+    nova_model = "gpt-3.5-turbo"
+    nova_tokenizer = "gpt3"
+
+    print("Models initialized successfully.")
+
+def generate_alistaire_response(prompt):
+    # Generate response using A.L.I.S.T.A.I.R.E. model
+    response = openai.Completion.create(
+        model="gpt-3.5-turbo",
+        prompt=prompt,
+        max_tokens=50,
+        temperature=0.7,
+        n=1,
+        stop=None,
+        temperature=0.7
+    )
+    return response.choices[0].text.strip()
+
+def generate_aurora_response(prompt):
+    # Generate response using AURORA model
+    response = openai.Completion.create(
+        model="gpt-3.5-turbo",
+        prompt=prompt,
+        max_tokens=50,
+        temperature=0.7,
+        n=1,
+        stop=None,
+        temperature=0.7
+    )
+    return response.choices[0].text.strip()
+
+def generate_nova_response(prompt):
+    # Generate response using NOVA model
+    response = openai.Completion.create(
+        model="gpt-3.5-turbo",
+        prompt=prompt,
+        max_tokens=50,
+        temperature=0.7,
+        n=1,
+        stop=None,
+        temperature=0.7
+    )
+    return response.choices[0].text.strip()
+
+def select_random_prompt(prompts):
+    # Select a random prompt from the given list
+    return random.choice(prompts)
+
+def create_database():
+    # Create a SQLite database
+    conn = sqlite3.connect("conversations.db")
+    c = conn.cursor()
+
+    # Create the conversations table
+    c.execute('''CREATE TABLE IF NOT EXISTS conversations
+                (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_input TEXT,
+                response_alistaire TEXT,
+                response_aurora TEXT,
+                response_nova TEXT)''')
+
+    # Commit the changes and close the connection
+    conn.commit()
+    conn.close()
+
+def save_conversation(user_input, response_alistaire, response_aurora, response_nova):
+    # Save the conversation in the database
+    conn = sqlite3.connect("conversations.db")
+    c = conn.cursor()
+
+    # Insert the conversation into the table
+    c.execute("INSERT INTO conversations (user_input, response_alistaire, response_aurora, response_nova) VALUES (?, ?, ?, ?)",
+              (user_input, response_alistaire, response_aurora, response_nova))
+
+    # Commit the changes and close the connection
+    conn.commit()
+    conn.close()
+
+def main():
+    print("Welcome to Conversational UI!")
+    print("Initializing models...")
+    
+    initialize_models()
+    create_database()
+    
+    prompt_choice = input("Would you like to choose prompts for each AI? (yes/no): ")
+    
+    if prompt_choice.lower() == “yes”:
+# Prompt for A.L.I.S.T.A.I.R.E. model
+prompt_alistaire = input(“Enter prompt for A.L.I.S.T.A.I.R.E.: “)
+
+    # Prompt for AURORA model
+    prompt_aurora = input("Enter prompt for AURORA: ")
+    
+    # Prompt for NOVA model
+    prompt_nova = input("Enter prompt for NOVA: ")
+else:
+    # Default prompts for A.L.I.S.T.A.I.R.E., AURORA, and NOVA
+    prompt_alistaire = "A.L.I.S.T.A.I.R.E. - Artificial Lifeform with Intelligent Sensory Technology and Advanced Interactive Robotics Exploration"
+    prompt_aurora = "AURORA: Advanced User Resource Optimization and Reporting Application"
+    prompt_nova = "NOVA: Network Operations and Visualization Architecture"
+    
+while True:
+    user_input = input("User: ")
+    
+    if user_input.lower() == "exit":
+        print("Exiting the program...")
+        break
+    
+    # Generate responses from the respective models
+    response_alistaire = generate_alistaire_response(prompt_alistaire + user_input)
+    response_aurora = generate_aurora_response(prompt_aurora + user_input)
+    response_nova = generate_nova_response(prompt_nova + user_input)
+    
+    # Save the conversation in the database
+    save_conversation(user_input, response_alistaire, response_aurora, response_nova)
+    
+    print("A.L.I.S.T.A.I.R.E.:", response_alistaire)
+    print("AURORA:", response_aurora)
+    print("NOVA:", response_nova)
+
+# Code for cleaning up and closing the database goes here
+
+print("Program terminated.")
+
+if name == “main”:
+main()
+
