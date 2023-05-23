@@ -1,0 +1,62 @@
+import openai
+import time
+
+# Set up your OpenAI API key
+openai.api_key = 'YOUR_API_KEY'
+
+def shellfish_copilot():
+    # Initialize the chat models
+    model_1 = 'gpt-3.5-turbo'
+    model_2 = 'gpt-3.5-turbo'
+
+    # Create an initial conversation list
+    conversation = [
+        {"role": "system", "content": "You are a helpful shellfish copilot."},
+        {"role": "user", "content": "What's the weather like today?"}
+    ]
+
+    # Define a function to generate a model response
+    def generate_model_response(model, messages):
+        response = openai.Completion.create(
+            model=model,
+            messages=messages,
+            max_tokens=150,
+            n=1,
+            stop=None,
+            temperature=0.6
+        )
+        return response.choices[0].message
+
+    # Start the conversation loop
+    while True:
+        # Model 1 generates a response
+        model_1_response = generate_model_response(model_1, conversation)
+
+        # Add Model 1's response to the conversation
+        conversation.append({"role": "assistant", "content": model_1_response['content']})
+
+        # Print Model 1's response
+        print("Model 1:", model_1_response['content'])
+
+        # Wait for a short time
+        time.sleep(1)
+
+        # Model 2 generates a response
+        model_2_response = generate_model_response(model_2, conversation)
+
+        # Add Model 2's response to the conversation
+        conversation.append({"role": "assistant", "content": model_2_response['content']})
+
+        # Print Model 2's response
+        print("Model 2:", model_2_response['content'])
+
+        # Wait for a short time
+        time.sleep(1)
+
+        # User input
+        user_input = input("You: ")
+
+        # Add user's input to the conversation
+        conversation.append({"role": "user", "content": user_input})
+
+shellfish_copilot()
